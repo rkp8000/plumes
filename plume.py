@@ -115,6 +115,12 @@ class Plume(object):
         self.ts = 0
         self.t = 0.
 
+        # get dimensionality of plume
+        if self.env.nz == 1:
+            self.dim = 2
+        else:
+            self.dim = 3
+
         # set all variables to none
         self.src_pos = None
         self.src_pos_idx = None
@@ -212,21 +218,28 @@ class BasicPlume(PoissonPlume):
         D: diffusivity (m^2/s)
         a: searcher size (m)
         tau: particle lifetime (s)
+
+    Default params: w: 0.4
+                    r: 10
+                    d: 0.1
+                    a: .002
+                    tau: 1000
         """
 
     name = 'basic'
 
-    def set_aux_params(self, w=0.4, r=10, d=0.1, a=.002, tau=1000):
+    def set_params(self, w=None, r=None, d=None, a=None, tau=None):
         # store auxiliary parameters
-        self.w = w
-        self.r = r
-        self.d = d
-        self.a = a
-        self.tau = tau
-        if self.env.nz == 1:
-            self.dim = 2
-        else:
-            self.dim = 3
+        if w:
+            self.w = w
+        if r:
+            self.r = r
+        if d:
+            self.d = d
+        if a:
+            self.a = a
+        if tau:
+            self.tau = tau
 
     def initialize(self):
         # create meshgrid of all locations
