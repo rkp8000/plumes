@@ -257,10 +257,10 @@ class BasicPlume(PoissonPlume):
         dz = z - self.src_pos[2]
 
         # calculate mean hit number at all locations
-        self.mean_hit_num = self.dt * advec_diff_mean_hit_rate(dx, dy, dz,
-                                                               self.w, self.r, self.d,
-                                                               self.a, self.tau, self.dim)
-        self.conc = self.mean_hit_num
+        self.mean_hit_rate = advec_diff_mean_hit_rate(dx, dy, dz,
+                                                      self.w, self.r, self.d,
+                                                      self.a, self.tau, self.dim)
+        self.conc = self.mean_hit_rate
 
         # get xy and xz cross slices of plume
         self.concxy = self.conc[:, :, self.env.center_zidx]
@@ -269,9 +269,11 @@ class BasicPlume(PoissonPlume):
         # store odor domain
         self.odor_domain = range(self.max_hit_number+1)
 
-    def sample(self, pos_idx):
+    def sample(self, pos_idx, dt=None):
+        if not dt:
+            dt = self.dt
         # randomly sample from plume
-        mean_hit_num = self.mean_hit_num[tuple(pos_idx)]
+        mean_hit_num = self.mean_hit_rate[tuple(pos_idx)] * dt
         if not np.isinf(mean_hit_num):
             hit_num = np.random.poisson(lam=mean_hit_num)
         else:
