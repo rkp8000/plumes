@@ -122,6 +122,8 @@ class Plume(object):
             self.dim = 3
 
         # set all variables to none
+        self.params = {}
+
         self.src_pos = None
         self.src_pos_idx = None
         self.srcx = None
@@ -231,14 +233,19 @@ class BasicPlume(PoissonPlume):
     def set_params(self, w=None, r=None, d=None, a=None, tau=None):
         # store auxiliary parameters
         if w:
+            self.params['w'] = w
             self.w = w
         if r:
+            self.params['r'] = r
             self.r = r
         if d:
+            self.params['d'] = d
             self.d = d
         if a:
+            self.params['a'] = a
             self.a = a
         if tau:
+            self.params['tau'] = tau
             self.tau = tau
 
     def initialize(self):
