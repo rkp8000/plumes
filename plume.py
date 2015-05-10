@@ -138,6 +138,8 @@ class Plume(object):
         self.concxy = None
         self.concxz = None
 
+        self.orm = None
+
     def reset(self):
         """Reset plume params."""
         # reset time and timestep
@@ -169,6 +171,17 @@ class Plume(object):
     def update(self):
         """Update everything."""
         self.update_time()
+
+    def set_orm(self, models, sim=None):
+        """Set up the object relational mapping of the plume.
+
+        The models object must have as an attribute a model called Plume."""
+
+        self.orm = models.Plume(type=self.name)
+        self.orm.plume_params = [models.PlumeParam(name=n, value=v) for n, v in self.params.items()]
+
+        if sim:
+            self.orm.simulations = [sim]
 
 
 class EmptyPlume(Plume):
