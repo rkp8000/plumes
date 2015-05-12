@@ -106,7 +106,7 @@ class Environment3d(object):
 
 class Plume(object):
     
-    def __init__(self, env, dt=.01):
+    def __init__(self, env, dt=.01, orm=None):
         
         # set bins and timestep
         self.env = env
@@ -138,7 +138,10 @@ class Plume(object):
         self.concxy = None
         self.concxz = None
 
-        self.orm = None
+        self._orm = None
+
+        if orm:
+            self.orm = orm
 
     def reset(self):
         """Reset plume params."""
@@ -177,13 +180,21 @@ class Plume(object):
 
         The models object must have as an attribute a model called Plume."""
 
-        self.orm = models.Plume(type=self.name)
-        self.orm.plume_params = [models.PlumeParam(name=n, value=v) for n, v in self.params.items()]
+        self._orm = models.Plume(type=self.name)
+        self._orm.plume_params = [models.PlumeParam(name=n, value=v) for n, v in self.params.items()]
 
         if sim:
-            self.orm.simulations = [sim]
+            self._orm.simulations = [sim]
 
+    @property
+    def orm(self):
+        return self._orm
 
+    @orm.setter
+    def orm(self, orm):
+        self._orm = orm
+        param_dict = {pp.name: pp.value for pp in self._orm.plume_params}
+        self.set_params(**param_dict)
 
 
 class EmptyPlume(Plume):
