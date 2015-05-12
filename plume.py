@@ -172,7 +172,7 @@ class Plume(object):
         """Update everything."""
         self.update_time()
 
-    def set_orm(self, models, sim=None):
+    def generate_orm(self, models, sim=None):
         """Set up the object relational mapping of the plume.
 
         The models object must have as an attribute a model called Plume."""
@@ -182,6 +182,8 @@ class Plume(object):
 
         if sim:
             self.orm.simulations = [sim]
+
+
 
 
 class EmptyPlume(Plume):
