@@ -201,9 +201,6 @@ class EmptyPlume(Plume):
     
     name = 'empty'
     
-    def set_aux_params(self):
-        pass
-    
     def initialize(self):
         
         # create meshgrid arrays for setting conc
@@ -217,6 +214,20 @@ class EmptyPlume(Plume):
     
     def sample(self, pos_idx):
         return 0
+
+
+class CollimatedPlume(Plume):
+
+    name = 'collimated'
+
+    def set_params(self):
+        pass
+
+    def initialize(self):
+        pass
+
+    def sample(self, pos_idx):
+        pass
 
 
 class PoissonPlume(Plume):
@@ -308,11 +319,11 @@ class BasicPlume(PoissonPlume):
         return min(hit_num, self.max_hit_number)
 
 
-class CollimatedPlume(PoissonPlume):
+class CollimatedPoissonPlume(PoissonPlume):
     """Stationary collimated plume. Specified by width (meters) and
     peak concentration."""
     
-    name = 'collimated'
+    name = 'collimated_poisson'
     
     def set_aux_params(self, width, peak, max_hit_number):
         # store auxiliary parameters
