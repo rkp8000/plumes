@@ -7,6 +7,7 @@ Classes for various types of plumes.
 """
 
 import numpy as np
+from scipy.stats import multivariate_normal as mvn
 from logprob_odor import advec_diff_mean_hit_rate
 
 
@@ -135,8 +136,6 @@ class Plume(object):
         self.srczidx = None
 
         self.conc = None
-        self.concxy = None
-        self.concxz = None
 
         self._orm = None
 
@@ -174,6 +173,18 @@ class Plume(object):
     def update(self):
         """Update everything."""
         self.update_time()
+
+    @property
+    def concxy(self):
+        return self.conc[:, :, self.env.center_zidx]
+
+    @property
+    def concxz(self):
+        return self.conc[:, self.env.center_yidx, :]
+
+    @property
+    def concyz(self):
+        return self.conc[self.env.center_xidx, :, :]
 
     def generate_orm(self, models, sim=None):
         """Set up the object relational mapping of the plume.
@@ -220,14 +231,47 @@ class CollimatedPlume(Plume):
 
     name = 'collimated'
 
-    def set_params(self):
-        pass
+    def set_params(self, max_conc, threshold, ymean, zmean, ystd, zstd):
+        """params of real plume:
+            ymean = 0.0105
+            zmean = 0.0213
+
+            ystd = .0073
+            zstd = .0094
+
+            max_conc = 488
+        """
+        self.params['max_conc'] = max_conc
+        self.max_conc = max_conc
+
+        self.params['threshold'] = threshold
+        self.threshold = threshold
+
+        self.params['ymean'] = ymean
+        self.ymean = ymean
+        self.params['zmean'] = zmean
+        self.zmean = zmean
+
+        self.params['ystd'] = ystd
+        self.ystd = ystd
+        self.params['zstd'] = zstd
+        self.zstd = zstd
 
     def initialize(self):
-        pass
+        # create meshgrid of all locations
+        x, y, z = np.meshgrid(self.env.x, self.env.y, self.env.z, indexing='ij')
+
+        cov = np.array([[self.ystd**2, 0], [0, self.zstd**2]])
+
+        norm_factor = 1. / (np.sqrt(((2*np.pi)**2) * np.linalg.det(cov)))
+        exponent = (-0.5 * ((y - self.ymean)**2) / (self.ystd**2)) + (-0.5 * ((z - self.zmean)**2) / (self.zstd**2))
+        self.conc = norm_factor * np.exp(exponent)
 
     def sample(self, pos_idx):
-        pass
+        if self.conc[tuple(pos_idx)] > self.threshold:
+            return 1
+        else:
+            return 0
 
 
 class PoissonPlume(Plume):
@@ -302,6 +346,7 @@ class BasicPlume(PoissonPlume):
         # get xy and xz cross slices of plume
         self.concxy = self.conc[:, :, self.env.center_zidx]
         self.concxz = self.conc[:, self.env.center_yidx, :]
+        self.
 
         # store odor domain
         self.odor_domain = range(self.max_hit_number+1)
