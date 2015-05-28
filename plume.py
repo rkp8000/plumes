@@ -343,11 +343,6 @@ class BasicPlume(PoissonPlume):
                                                       self.a, self.tau, self.dim)
         self.conc = self.mean_hit_rate
 
-        # get xy and xz cross slices of plume
-        self.concxy = self.conc[:, :, self.env.center_zidx]
-        self.concxz = self.conc[:, self.env.center_yidx, :]
-        self.
-
         # store odor domain
         self.odor_domain = range(self.max_hit_number+1)
 
