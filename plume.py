@@ -263,9 +263,8 @@ class CollimatedPlume(Plume):
 
         cov = np.array([[self.ystd**2, 0], [0, self.zstd**2]])
 
-        norm_factor = 1. / (np.sqrt(((2*np.pi)**2) * np.linalg.det(cov)))
         exponent = (-0.5 * ((y - self.ymean)**2) / (self.ystd**2)) + (-0.5 * ((z - self.zmean)**2) / (self.zstd**2))
-        self.conc = norm_factor * np.exp(exponent)
+        self.conc = self.max_conc * np.exp(exponent)
 
     def sample(self, pos_idx):
         if self.conc[tuple(pos_idx)] > self.threshold:
