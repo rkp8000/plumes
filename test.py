@@ -12,9 +12,29 @@ class TruismsTestCase(unittest.TestCase):
     def test_truisms(self):
         self.assertTrue(True)
 
+    def test_falsisms(self):
+        self.assertTrue(False)
+
 
 class Environment3dTestCase(unittest.TestCase):
-    pass
+
+    def test_pos_to_idx_conversion(self):
+
+        xrbins = np.linspace(0, 10., 11)
+        yrbins = np.linspace(0, 5., 6)
+        zrbins = np.linspace(0, 5., 6)
+
+        env = plume.Environment3d(xrbins, yrbins, zrbins)
+
+        idx = (3, 2, 4)
+        pos = (3.5, 2.5, 4.5)
+
+        np.testing.assert_array_almost_equal(np.array(idx),
+                                             env.idx_from_pos(pos),
+                                             decimal=5)
+        np.testing.assert_array_almost_equal(np.array(pos),
+                                             env.pos_from_idx(idx),
+                                             decimal=5)
 
 
 class SimplePlumeTestCase(unittest.TestCase):
@@ -60,3 +80,7 @@ class SimplePlumeTestCase(unittest.TestCase):
 
         # ensure no dependence of concentration on x
         self.assertAlmostEqual(pl.conc[(3, 6, 11)], pl.conc[(38, 6, 11)])
+
+
+if __name__ == '__main__':
+    unittest.main()
