@@ -36,6 +36,17 @@ class Environment3dTestCase(unittest.TestCase):
                                              env.pos_from_idx(idx),
                                              decimal=5)
 
+        pos = (3.6, 2.6, 4.6)
+
+        np.testing.assert_array_almost_equal(np.array(idx),
+                                             env.idx_from_pos(pos),
+                                             decimal=5)
+        pos = (3.4, 2.4, 4.4)
+
+        np.testing.assert_array_almost_equal(np.array(idx),
+                                             env.idx_from_pos(pos),
+                                             decimal=5)
+
 
 class SimplePlumeTestCase(unittest.TestCase):
 
