@@ -231,7 +231,7 @@ class CollimatedPlume(Plume):
 
     name = 'collimated'
 
-    def set_params(self, max_conc, threshold, ymean, zmean, ystd, zstd):
+    def set_params(self, max_conc=None, threshold=None, ymean=None, zmean=None, ystd=None, zstd=None):
         """params of real plume:
             ymean = 0.0105
             zmean = 0.0213
@@ -241,21 +241,27 @@ class CollimatedPlume(Plume):
 
             max_conc = 488
         """
-        self.params['max_conc'] = max_conc
-        self.max_conc = max_conc
+        if max_conc is not None:
+            self.params['max_conc'] = max_conc
+            self.max_conc = max_conc
 
-        self.params['threshold'] = threshold
-        self.threshold = threshold
+        if threshold is not None:
+            self.params['threshold'] = threshold
+            self.threshold = threshold
 
-        self.params['ymean'] = ymean
-        self.ymean = ymean
-        self.params['zmean'] = zmean
-        self.zmean = zmean
+        if ymean is not None:
+            self.params['ymean'] = ymean
+            self.ymean = ymean
+        if zmean is not None:
+            self.params['zmean'] = zmean
+            self.zmean = zmean
 
-        self.params['ystd'] = ystd
-        self.ystd = ystd
-        self.params['zstd'] = zstd
-        self.zstd = zstd
+        if ystd is not None:
+            self.params['ystd'] = ystd
+            self.ystd = ystd
+        if zstd is not None:
+            self.params['zstd'] = zstd
+            self.zstd = zstd
 
     def initialize(self):
         # create meshgrid of all locations
