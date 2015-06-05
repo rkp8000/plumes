@@ -137,7 +137,7 @@ class DiscretizationTestCase(unittest.TestCase):
         pos_idxs = self.env.discretize_position_sequence(positions)
 
         # check to make sure duration is correct
-        self.assertEqual(len(pos_idxs), 10)
+        self.assertEqual(len(pos_idxs), 11)
 
     def test_perfectly_diagonal_trajectory_discretization_by_environment3d(self):
         x = np.linspace(.15, .75, 40)
