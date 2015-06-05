@@ -14,6 +14,11 @@ from logprob_odor import advec_diff_mean_hit_rate
 class Environment3d(object):
     """3D environment object."""
 
+    @staticmethod
+    def diagonalest_lattice_path(x0, x1):
+        """Return a lattice path between x0 and x1 that is as close to diagonal as possible."""
+        return
+
     def __init__(self, xbins, ybins, zbins):
         # store bins
         self.xbins = xbins
@@ -103,6 +108,38 @@ class Environment3d(object):
             return True
 
         return False
+
+    def discretize_position_sequence(self, positions):
+
+        # convert all positions to idxs
+        idxs = np.array([self.idx_from_pos(pos) for pos in positions])
+
+        # calculate L1 distance between every pair of adjacent idxs
+        l1_dists = np.abs(np.diff(idxs, axis=0)).sum(axis=1)
+
+        # split idxs into chunks such of adjacent idxs
+        split_idxs = (l1_dists > 1).nonzero()[0]
+        chunks = np.split(idx, split_idxs + 1)
+
+        # calculate connecting path for each pair of adjacent chunks
+        connectors = []
+        for cctr, chunk in enumerate(chunks[:-1]):
+            next_chunk = idx_chunks[cctr + 1]
+            connectors += [self.diagonalest_lattice_path(chunk[-1], next_chunk[0])]
+
+        # interleave chunks with connectors
+        temp_idxs = [None] * (len(chunks) + len(connectors))
+        temp_idxs[::2] = idx_chunks
+        temp_idxs[1::2] = connectors
+        temp_idxs = np.concatenate(temp_idxs)
+
+        # remove adjacent duplicates
+        final_idxs = [temp_idxs[0]]
+        for temp_idx in temp_idxs[1:]:
+            if not np.all(temp_idx == final_idxs[-1]):
+                final_idxs += [temp_idx]
+
+        return final_idxs
 
 
 class Plume(object):
