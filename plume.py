@@ -15,9 +15,37 @@ class Environment3d(object):
     """3D environment object."""
 
     @staticmethod
-    def diagonalest_lattice_path(x0, x1):
-        """Return a lattice path between x0 and x1 that is as close to diagonal as possible."""
-        return
+    def diagonalest_lattice_path(r0, r1):
+        """Return a lattice path between r0 and r1 that is as close to diagonal as possible."""
+        dx = r1[0] - r0[0]
+        dy = r1[1] - r0[1]
+        dz = r1[2] - r0[2]
+
+        xstep = [np.sign(dx), 0, 0]
+        ystep = [0, np.sign(dy), 0]
+        zstep = [0, 0, np.sign(dz)]
+
+        # to determine which lattice path yields the most "diagonal" path, we split the
+        # interval [0, 1] into segments for dx, dy, and dz, and then sort the steps by
+        # where they lie on the interval
+
+        xpts = np.linspace(0, 1, np.abs(dx) + 2)[1:-1]
+        ypts = np.linspace(0, 1, np.abs(dy) + 2)[1:-1]
+        zpts = np.linspace(0, 1, np.abs(dz) + 2)[1:-1]
+
+        unsorted_steps = np.concatenate([np.tile(xstep, (np.abs(dx), 1)),
+                                         np.tile(ystep, (np.abs(dy), 1)),
+                                         np.tile(zstep, (np.abs(dz), 1))], axis=0)
+
+        sort_keys = np.concatenate([xpts, ypts, zpts])
+
+        # sort all steps
+        sorted_steps = unsorted_steps[np.argsort(sort_keys)]
+
+        # get actual position indexs
+        pos_idxs = sorted_steps.cumsum(axis=0) + r0
+
+        return pos_idxs
 
     def __init__(self, xbins, ybins, zbins):
         # store bins
@@ -119,17 +147,17 @@ class Environment3d(object):
 
         # split idxs into chunks such of adjacent idxs
         split_idxs = (l1_dists > 1).nonzero()[0]
-        chunks = np.split(idx, split_idxs + 1)
+        chunks = np.split(idxs, split_idxs + 1)
 
         # calculate connecting path for each pair of adjacent chunks
         connectors = []
         for cctr, chunk in enumerate(chunks[:-1]):
-            next_chunk = idx_chunks[cctr + 1]
+            next_chunk = chunks[cctr + 1]
             connectors += [self.diagonalest_lattice_path(chunk[-1], next_chunk[0])]
 
         # interleave chunks with connectors
         temp_idxs = [None] * (len(chunks) + len(connectors))
-        temp_idxs[::2] = idx_chunks
+        temp_idxs[::2] = chunks
         temp_idxs[1::2] = connectors
         temp_idxs = np.concatenate(temp_idxs)
 
