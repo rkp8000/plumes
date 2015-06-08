@@ -338,7 +338,7 @@ class CollimatedPlume(Plume):
         self.conc = self.max_conc * np.exp(exponent)
 
     def sample(self, pos_idx):
-        if self.conc[tuple(pos_idx)] > self.threshold:
+        if self.conc[tuple(pos_idx)] > self.threshold and self.threshold >= 0:
             return 1
         else:
             return 0
