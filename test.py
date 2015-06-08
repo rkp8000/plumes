@@ -13,7 +13,7 @@ class TruismsTestCase(unittest.TestCase):
         self.assertTrue(True)
 
     def test_falsisms(self):
-        self.assertFalse(True)
+        self.assertFalse(False)
 
 
 class Environment3dTestCase(unittest.TestCase):
