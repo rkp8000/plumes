@@ -280,7 +280,7 @@ class EmptyPlume(Plume):
     def initialize(self):
         
         # create meshgrid arrays for setting conc
-        x, y, z = np.meshgrid(self.xr, self.yr, self.zr, indexing='ij')
+        x, y, z = np.meshgrid(self.env.x, self.env.y, self.env.z, indexing='ij')
         
         # create empty conc plume
         self.conc = np.zeros(x.shape, dtype=float)
