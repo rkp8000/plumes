@@ -95,6 +95,11 @@ class Environment3d(object):
         self.center_yidx = int(np.floor(self.ny/2))
         self.center_zidx = int(np.floor(self.nz/2))
 
+        # make extents for plotting
+        self.extentxy = [self.xbins[0], self.xbins[-1], self.ybins[0], self.ybins[-1]]
+        self.extentxz = [self.xbins[0], self.xbins[-1], self.zbins[0], self.zbins[-1]]
+        self.extentyz = [self.ybins[0], self.ybins[-1], self.zbins[0], self.zbins[-1]]
+
     def pos_from_idx(self, idx):
         """Get floating point position from index."""
 

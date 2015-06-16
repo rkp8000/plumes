@@ -47,6 +47,36 @@ class Environment3dTestCase(unittest.TestCase):
                                              env.idx_from_pos(pos),
                                              decimal=5)
 
+    def test_extent_correctly_set(self):
+
+        xbinmin = -1.
+        xbinmax = 3.3
+        ybinmin = 6.5
+        ybinmax = 10.9
+        zbinmin = 1.1
+        zbinmax = 4.4
+
+        xrbins = np.linspace(xbinmin, xbinmax, 10)
+        yrbins = np.linspace(ybinmin, ybinmax, 6)
+        zrbins = np.linspace(zbinmin, zbinmax, 6)
+
+        env = plume.Environment3d(xrbins, yrbins, zrbins)
+
+        self.assertEqual(xbinmin, env.extentxy[0])
+        self.assertEqual(xbinmin, env.extentxz[0])
+        self.assertEqual(xbinmax, env.extentxy[1])
+        self.assertEqual(xbinmax, env.extentxz[1])
+
+        self.assertEqual(ybinmin, env.extentxy[2])
+        self.assertEqual(ybinmin, env.extentyz[0])
+        self.assertEqual(ybinmax, env.extentxy[3])
+        self.assertEqual(ybinmax, env.extentyz[1])
+
+        self.assertEqual(zbinmin, env.extentxz[2])
+        self.assertEqual(zbinmin, env.extentyz[2])
+        self.assertEqual(zbinmax, env.extentxz[3])
+        self.assertEqual(zbinmax, env.extentyz[3])
+
 
 class SimplePlumeTestCase(unittest.TestCase):
 
