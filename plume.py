@@ -349,6 +349,57 @@ class CollimatedPlume(Plume):
             return 0
 
 
+class SpreadingGaussianPlume(Plume):
+    """
+    Plume whose cross-section is always Gaussian & whose magnitude decreases hyperbolically (as 1/x) with distance from the source. This is based on "biology and the mechanics of the wave-swept environment" by Mark Denny (pp. 144-147).
+
+    The parameters and equation are from Floris van Breugel (https://github.com/florisvb/DataFit)
+    """
+
+    name = 'spreading_gaussian'
+
+    def set_params(self, **kwargs):
+        """
+        Set parameters
+        :param Q: scaling factor (default -0.26618286981003886)
+        :param u: wind speed (default 0.4)
+        :param u_star: some parameter (default 0.06745668765535813)
+        :param alpha_y: some parameter (default -0.066842568000323691)
+        :param alpha_z: some parameter (default 0.14538827993452938)
+        :param x_source: x source position (default -0.64790143304753445)
+        :param y_source: y source position (default .003)
+        :param z_source: z source position (default .011)
+        :param bkgd: background level (default 400)
+        :param threshold: threshold for detection of plume (default 450)
+        """
+
+        for k, v in kwargs.items():
+            self.params[k] = v
+            self.__dict__[k] = v
+
+    def initialize(self):
+        # create meshgrid of all locations
+        x, y, z = np.meshgrid(self.env.x, self.env.y, self.env.z, indexing='ij')
+
+        yterm = ((y - self.ysource)**2) * (self.u**2)
+        yterm /= (2 * (self.alphay**2) * (self.ustar**2) * ((x - self.xsource)**2))
+
+        zterm = ((z - self.zsource)**2) * (self.u**2)
+        zterm /= (2 * (self.alphaz**2) * (self.ustar**2) * ((x - self.xsource)**2))
+
+        c = (self.Q * self.u)
+        c /= (2 * np.pi * self.alphay * self.alphaz * (self.ustar**2) * (x - self.xsource)**2)
+        c *= np.exp(-(yterm + zterm)) + self.bkgd
+
+        self.conc = c
+
+    def sample(self, pos_idx):
+        if self.conc[tuple(pos_idx)] > self.threshold and self.threshold >= 0:
+            return 1
+        else:
+            return 0
+
+
 class PoissonPlume(Plume):
     """In Poisson Plumes, odor samples are given by draws from a Poisson 
     distribution with mean equal to concentration times timestep (dt)"""
