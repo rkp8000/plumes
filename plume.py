@@ -343,7 +343,7 @@ class CollimatedPlume(Plume):
         self.conc = self.max_conc * np.exp(exponent)
 
     def sample(self, pos_idx):
-        if self.conc[tuple(pos_idx)] > self.threshold and self.threshold >= 0:
+        if self.conc[tuple(pos_idx)] > self.threshold >= 0:
             return 1
         else:
             return 0
@@ -353,7 +353,7 @@ class SpreadingGaussianPlume(Plume):
     """
     Plume whose cross-section is always Gaussian & whose magnitude decreases hyperbolically (as 1/x) with distance from the source. This is based on "biology and the mechanics of the wave-swept environment" by Mark Denny (pp. 144-147).
 
-    The parameters and equation are from Floris van Breugel (https://github.com/florisvb/DataFit)
+    The parameters and equation are from Floris van Breugel (https://github.com/florisvb/DataFit).
     """
 
     name = 'spreading_gaussian'
@@ -394,7 +394,7 @@ class SpreadingGaussianPlume(Plume):
         self.conc = c
 
     def sample(self, pos_idx):
-        if self.conc[tuple(pos_idx)] > self.threshold and self.threshold >= 0:
+        if self.conc[tuple(pos_idx)] > self.threshold >= 0:
             return 1
         else:
             return 0
