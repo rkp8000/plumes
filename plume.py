@@ -381,15 +381,16 @@ class SpreadingGaussianPlume(Plume):
         # create meshgrid of all locations
         x, y, z = np.meshgrid(self.env.x, self.env.y, self.env.z, indexing='ij')
 
-        yterm = ((y - self.ysource)**2) * (self.u**2)
-        yterm /= (2 * (self.alphay**2) * (self.ustar**2) * ((x - self.xsource)**2))
+        y_term = ((y - self.y_source)**2) * (self.u**2)
+        y_term /= (2 * (self.alpha_y**2) * (self.u_star**2) * ((x - self.x_source)**2))
 
-        zterm = ((z - self.zsource)**2) * (self.u**2)
-        zterm /= (2 * (self.alphaz**2) * (self.ustar**2) * ((x - self.xsource)**2))
+        z_term = ((z - self.z_source)**2) * (self.u**2)
+        z_term /= (2 * (self.alpha_z**2) * (self.u_star**2) * ((x - self.x_source)**2))
 
         c = (self.Q * self.u)
-        c /= (2 * np.pi * self.alphay * self.alphaz * (self.ustar**2) * (x - self.xsource)**2)
-        c *= np.exp(-(yterm + zterm)) + self.bkgd
+        c /= (2 * np.pi * self.alpha_y * self.alpha_z * (self.u_star**2) * (x - self.x_source)**2)
+        c *= np.exp(-(y_term + z_term))
+        c += self.bkgd
 
         self.conc = c
 
